@@ -53,7 +53,7 @@ pipeline {
                 }
             }
         }
-        stage('docker push'){
+        stage('kubectl'){
             steps{
                 script{
                     withKubeConfig([credentialsId: 'kubeconfig']) {
