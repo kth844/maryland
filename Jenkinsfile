@@ -53,5 +53,15 @@ pipeline {
                 }
             }
         }
+        stage('docker push'){
+            steps{
+                script{
+                    withKubeConfig([credentialsId: 'kubeconfig']) {
+                          sh "aws eks update-kubeconfig --name kevin-sre-1285"
+                          sh 'kubectl get pods'
+                    }
+                }
+            }
+        }
     }
 }
