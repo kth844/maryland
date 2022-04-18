@@ -6,36 +6,36 @@ pipeline {
         dockerImage =''
     }
     stages {
-        stage('Sonar Quality Analysis'){
-            steps{
-                withSonarQubeEnv(credentialsId: 'sonar-cloud', installationName: 'sonarcloud') { 
-                    sh 'mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar'
-                }
-            }
-        } 
-         stage('clean/package ') {
-            steps {
-                sh 'mvn clean package'
-            }
-        }
-        stage('docker build'){
-            steps{
-                script {
-                    echo "$registry:$currentBuild.number"
-                    dockerImage = docker.build "$registry"
-                }
-            }
-        }
-        stage('docker push'){
-            steps{
-                script{
-                docker.withRegistry('', dockerHubCreds){
-                    dockerImage.push("$currentBuild.number")
-                    dockerImage.push("latest")
-                }
-                }
-            }
-        }
+        // stage('Sonar Quality Analysis'){
+        //     steps{
+        //         withSonarQubeEnv(credentialsId: 'sonar-cloud', installationName: 'sonarcloud') { 
+        //             sh 'mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar'
+        //         }
+        //     }
+        // } 
+        //  stage('clean/package ') {
+        //     steps {
+        //         sh 'mvn clean package'
+        //     }
+        // }
+        // stage('docker build'){
+        //     steps{
+        //         script {
+        //             echo "$registry:$currentBuild.number"
+        //             dockerImage = docker.build "$registry"
+        //         }
+        //     }
+        // }
+        // stage('docker push'){
+        //     steps{
+        //         script{
+        //         docker.withRegistry('', dockerHubCreds){
+        //             dockerImage.push("$currentBuild.number")
+        //             dockerImage.push("latest")
+        //         }
+        //         }
+        //     }
+        // }
         stage('Wait for approval') {
             steps {
                 script {
@@ -57,7 +57,7 @@ pipeline {
             steps{
                 script{
                     withKubeConfig([credentialsId: 'kubeconfig']) {
-                          sh "aws eks update-kubeconfig --name kevin-sre-1285"
+                          sh "aws eks update-kubeconfig --name kevin-sre-1285 --region us-east-1"
                           sh 'kubectl get pods'
                     }
                 }
