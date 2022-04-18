@@ -1,5 +1,10 @@
 pipeline {
     agent any
+    environment{
+        registry = 'kth844/alpine'
+        dockerHubCreds = 'alpine'
+        dockerImage =''
+    }
     stages {
         stage('Sonar Quality Analysis'){
             steps{
@@ -8,16 +13,24 @@ pipeline {
                 }
             }
         } 
-         stage('clean') {
+         stage('clean/package ') {
             steps {
-                sh 'mvn clean'
+                sh 'mvn clean package'
             }
-      }
-        stage('package') {
-            steps {
-                sh 'mvn package'
+        }
+        stage('docker build'){
+            steps{
+                echo "$registry:$currentBuild.number"
+                dockerImage = docker.build "$registry"
             }
-      }
- 
+        }
+        stage('docker push'){
+            steps{
+                docker.withRegistry('', dockerHubCreds){
+                    dockerImage.push("$currentBuild.number")
+                    dockerImage.push("latest")
+                }
+            }
+        }
     }
 }
