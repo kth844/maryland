@@ -20,15 +20,19 @@ pipeline {
         }
         stage('docker build'){
             steps{
-                echo "$registry:$currentBuild.number"
-                dockerImage = docker.build "$registry"
+                script {
+                    echo "$registry:$currentBuild.number"
+                    dockerImage = docker.build "$registry"
+                }
             }
         }
         stage('docker push'){
             steps{
+                script{
                 docker.withRegistry('', dockerHubCreds){
                     dockerImage.push("$currentBuild.number")
                     dockerImage.push("latest")
+                }
                 }
             }
         }
