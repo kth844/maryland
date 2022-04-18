@@ -57,7 +57,7 @@ pipeline {
             steps{
                 script{
                     withKubeConfig([credentialsId: 'kubeconfig']) {
-                          sh "aws eks update-kubeconfig --name kevin-sre-1285 --region us-east-1"
+                        //   sh "aws eks update-kubeconfig --name kevin-sre-1285 --region us-east-1"
                           sh 'kubectl get pods'
                     }
                 }
