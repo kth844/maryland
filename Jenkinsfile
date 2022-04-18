@@ -56,12 +56,15 @@ pipeline {
         stage('kubectl'){
             steps{
                 script{
-                    withKubeConfig([credentialsId: 'kubeconfig']) {
-
-                        sh 'curl -LO "https://storage.googleapis.com/kubernetes-release/release/v1.20.5/bin/linux/amd64/kubectl"'  
-                        sh 'chmod u+x ./kubectl' 
-                        sh 'aws eks update-kubeconfig --name kevin-sre-1285 --region us-east-1' 
-                        sh './kubectl get pods'
+                    withAWS(credentials: 'SRE aws credentials'){
+                        sh 'aws configure --profile kevin-sre-1285'
+                        withKubeConfig([credentialsId: 'kubeconfig']) {
+                            
+                            sh 'curl -LO "https://storage.googleapis.com/kubernetes-release/release/v1.20.5/bin/linux/amd64/kubectl"'  
+                            sh 'chmod u+x ./kubectl' 
+                            sh 'aws eks update-kubeconfig --name kevin-sre-1285 --region us-east-1' 
+                            sh './kubectl get pods'
+                        }
                     }
                 }
             }
